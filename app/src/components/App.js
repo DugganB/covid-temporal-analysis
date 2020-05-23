@@ -16,6 +16,16 @@ class App extends Component {
     };
   }
 
+  idealDataStructure() {
+    return {
+      "01-01-2020": {
+        fips_Code: "county_data",
+        fips_code2: "county data",
+        fips_code3: "county data",
+      },
+    };
+  }
+
   componentDidMount() {}
 
   render() {
