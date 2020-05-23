@@ -1,5 +1,7 @@
 import React, { Component } from "react";
-import { Map, TileLayer, Marker, Popup } from "react-leaflet";
+import { Map, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
+
+import USCounties from "../data/counties.json";
 
 class App extends Component {
   constructor(props) {
@@ -13,6 +15,9 @@ class App extends Component {
       zoom: 5,
     };
   }
+
+  componentDidMount() {}
+
   render() {
     const position = [this.state.lat, this.state.lng];
     return (
@@ -22,11 +27,18 @@ class App extends Component {
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker position={position}>
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
-          </Marker>
+          <GeoJSON
+            data={USCounties}
+            onEachFeature={(feature, layer, test) => {
+              layer.on("mouseover", (e) => {
+                e.target.setStyle({ stroke: true, fill: "black" });
+              });
+              layer.on("mouseout", (e) => {
+                e.target.setStyle({ stroke: false, fill: "black" });
+              });
+            }}
+            stroke={false}
+          />
         </Map>
       </div>
     );
