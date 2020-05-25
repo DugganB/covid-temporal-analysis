@@ -1,0 +1,12 @@
+{
+  "name": "data-constructor",
+  "version": "1.0.0",
+  "description": "Data construction for app based viewing of COVID-19 county level data.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Duggan Burke",
+  "license": "ISC"
+}
