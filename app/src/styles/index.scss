@@ -32,6 +32,10 @@ code {
     bottom: 2rem;
     left: 10vw;
     width: 80vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
   }
 
   &.main {
@@ -43,7 +47,13 @@ code {
   &.selected-county {
     right: 2rem;
     top: 2rem;
+    width: 18rem;
   }
+}
+
+.slider-date {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
 }
 
 h1 {

@@ -26,8 +26,8 @@ rawData.forEach((entry) => {
   generateDoublingData(date, entry.fips);
 });
 
-function getPreviousDate(date, unit) {
-  let previousDate = moment(date).subtract(1, unit);
+function getPreviousDate(date, unit, amount = 1) {
+  let previousDate = moment(date).subtract(amount, unit);
   return previousDate.format("YYYY-MM-DD");
 }
 
@@ -46,18 +46,39 @@ function generateDeltaData(date, countyId) {
 function generateDoublingData(date, countyId) {
   // Using a 7 day window to calculate the doubling time of cases/deaths
   let currentEntry = dateToEntryMap[date][countyId] || {};
-  let previousWeekEntry =
-    (dateToEntryMap[getPreviousDate(date, "weeks")] || {})[countyId] || {};
-  let casesWeekDoublingRatio;
-  if (previousWeekEntry.cases !== undefined) {
-    casesWeekDoublingRatio =
-      (currentEntry.cases - previousWeekEntry.cases) / previousWeekEntry.cases;
+  let previousWeekEntries = [0, 1, 2, 3, 4, 5, 6]
+    .map(
+      (i) => (dateToEntryMap[getPreviousDate(date, "days", i)] || {})[countyId]
+    )
+    .filter((e) => e != null);
+  let casesAveragePercentGrowth_Week =
+    previousWeekEntries
+      .map((entry) => (entry.casesDelta / entry.cases) * 100)
+      .reduce((a, b) => a + b) / previousWeekEntries.length;
+  let deathsAveragePercentGrowth_Week =
+    previousWeekEntries
+      .map((entry) => (entry.deathsDelta / entry.deaths) * 100)
+      .reduce((a, b) => a + b) / previousWeekEntries.length;
+
+  let casesDoublingTimeDays;
+  let deathsDoublingTimeDays;
+  if (currentEntry.cases === 0 || casesAveragePercentGrowth_Week === 0) {
+    casesDoublingTimeDays = "N/A";
   } else {
-    casesWeekDoublingRatio = 0;
+    casesDoublingTimeDays =
+      Math.round((70 / casesAveragePercentGrowth_Week) * 10) / 10;
   }
+  if (currentEntry.deaths === 0 || deathsAveragePercentGrowth_Week === 0) {
+    deathsDoublingTimeDays = "N/A";
+  } else {
+    deathsDoublingTimeDays =
+      Math.round((70 / deathsAveragePercentGrowth_Week) * 10) / 10;
+  }
+
   dateToEntryMap[date][countyId] = {
     ...currentEntry,
-    casesDoublingTimeDays: (70 / (casesWeekDoublingRatio * 100)) * 7,
+    casesDoublingTimeDays,
+    deathsDoublingTimeDays,
   };
 }
 

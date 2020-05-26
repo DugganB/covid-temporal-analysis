@@ -8,6 +8,7 @@ import {
   FormControlLabel,
   Radio,
 } from "@material-ui/core";
+import moment from "moment";
 
 import USCounties from "../data/counties.json";
 import ProcessedData from "../data/processed-data-per-county.json";
@@ -100,6 +101,27 @@ class App extends PureComponent {
     return (
       <div className="panel selected-county">
         <h2>{selectedCounty.NAMELSAD}</h2>
+        <h3>{moment(selectedCountyDateEntry.date).format("ll")}</h3>
+        <div className="selected-county-stat">
+          Total Infected: {selectedCountyDateEntry.cases}
+        </div>
+        <div className="selected-county-stat">
+          Total Deaths: {selectedCountyDateEntry.deaths}
+        </div>
+        <div className="selected-county-stat">
+          New Cases: {selectedCountyDateEntry.casesDelta}
+        </div>
+        <div className="selected-county-stat">
+          New Deaths: {selectedCountyDateEntry.deathsDelta}
+        </div>
+        <div className="selected-county-stat">
+          Infections Doubling Time (days):{" "}
+          {selectedCountyDateEntry.casesDoublingTimeDays}
+        </div>
+        <div className="selected-county-stat">
+          Deaths Doubling Time (Days):{" "}
+          {selectedCountyDateEntry.deathsDoublingTimeDays}
+        </div>
       </div>
     );
   }
@@ -209,12 +231,20 @@ class App extends PureComponent {
                   control={<Radio />}
                   label="casesDoublingTimeDays"
                 />
+                <FormControlLabel
+                  value="deathsDoublingTimeDays"
+                  control={<Radio />}
+                  label="deathsDoublingTimeDays"
+                />
               </RadioGroup>
             </FormControl>
           </div>
         </div>
         {this.renderSelectedCountyPanel()}
         <div className="panel slider">
+          <div className="slider-date">
+            {moment(this.state.dateToDisplay).format("ll")}
+          </div>
           <Slider
             max={this.state.dateArray.length - 1}
             min={0}
@@ -222,7 +252,7 @@ class App extends PureComponent {
             onChange={(e, value) =>
               this.setState({ dateToDisplay: this.state.dateArray[value] })
             }
-            valueLabelDisplay="auto"
+            valueLabelDisplay="off"
           />
         </div>
       </div>
