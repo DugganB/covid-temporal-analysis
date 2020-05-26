@@ -57,18 +57,24 @@ function generateDoublingData(date, countyId) {
       .reduce((a, b) => a + b) / previousWeekEntries.length;
   let deathsAveragePercentGrowth_Week =
     previousWeekEntries
-      .map((entry) => (entry.deathsDelta / entry.deaths) * 100)
+      .map((entry) => {
+        if (entry.deaths > 0) {
+          return (entry.deathsDelta / entry.deaths) * 100;
+        } else {
+          return 0;
+        }
+      })
       .reduce((a, b) => a + b) / previousWeekEntries.length;
 
   let casesDoublingTimeDays;
   let deathsDoublingTimeDays;
-  if (currentEntry.cases === 0 || casesAveragePercentGrowth_Week === 0) {
+  if (currentEntry.cases <= 1 || casesAveragePercentGrowth_Week === 0) {
     casesDoublingTimeDays = "N/A";
   } else {
     casesDoublingTimeDays =
       Math.round((70 / casesAveragePercentGrowth_Week) * 10) / 10;
   }
-  if (currentEntry.deaths === 0 || deathsAveragePercentGrowth_Week === 0) {
+  if (currentEntry.deaths <= 1 || deathsAveragePercentGrowth_Week === 0) {
     deathsDoublingTimeDays = "N/A";
   } else {
     deathsDoublingTimeDays =

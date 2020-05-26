@@ -32,7 +32,7 @@ class App extends PureComponent {
 
       lat: 39.5,
       lng: -98.35,
-      zoom: 5,
+      zoom: 4,
 
       dateToDisplay: Object.keys(ProcessedData)[0],
       dateRangeValue: 0,
@@ -200,17 +200,18 @@ class App extends PureComponent {
           />
         </Map>
         <div className="panel main">
-          <h1>COVID-19 Infections over time</h1>
+          <h1>COVID-19 Infections Over Time</h1>
           <p>
             This map displays various stats for the selected date in the slider
             below.
           </p>
+          <p>Click on a county to view all statistics for the selected date.</p>
           <div>
             <FormControl component="fieldset">
-              <FormLabel component="legend">Gender</FormLabel>
+              <FormLabel component="legend">Display Stat:</FormLabel>
               <RadioGroup
-                aria-label="gender"
-                name="gender1"
+                aria-label="Display Statistic"
+                name="displayStat"
                 value={this.state.selectedStat}
                 onChange={(e) =>
                   this.setState({ selectedStat: e.target.value })
@@ -219,22 +220,22 @@ class App extends PureComponent {
                 <FormControlLabel
                   value="casesDelta"
                   control={<Radio classes={{ root: "radio-control" }} />}
-                  label="casesDelta"
+                  label="Day's New Cases"
                 />
                 <FormControlLabel
                   value="deathsDelta"
                   control={<Radio />}
-                  label="deathsDelta"
+                  label="Day's New Deaths"
                 />
                 <FormControlLabel
                   value="casesDoublingTimeDays"
                   control={<Radio />}
-                  label="casesDoublingTimeDays"
+                  label="Cases Doubling Time (Days)"
                 />
                 <FormControlLabel
                   value="deathsDoublingTimeDays"
                   control={<Radio />}
-                  label="deathsDoublingTimeDays"
+                  label="Deaths Doubling Time (Days)"
                 />
               </RadioGroup>
             </FormControl>
