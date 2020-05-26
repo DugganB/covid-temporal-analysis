@@ -1,3 +1,7 @@
+$panel-background: #16161a;
+$header-color: #fffffe;
+$text-color: #94a1b2;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -13,10 +17,44 @@ code {
 }
 
 .map {
-  height: 90vh;
+  height: 100vh;
 }
 
 .slider {
-  max-width: 80vw;
-  margin: 2rem auto;
+  position: absolute;
+  bottom: 2rem;
+  left: 10vw;
+  width: 80vw;
+  padding: 1rem 2rem;
+  background-color: $panel-background;
+  border-radius: 10px;
+  z-index: 999;
+}
+
+.main-panel {
+  background-color: $panel-background;
+  position: absolute;
+  left: 2rem;
+  top: 2rem;
+  z-index: 999;
+  color: $text-color;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+}
+
+h1 {
+  color: $header-color;
+  font-size: 1.6rem;
+}
+
+.MuiFormLabel-root {
+  color: $text-color !important;
+}
+
+.radio-control {
+  color: red;
+
+  &.Mui-checked {
+    color: green;
+  }
 }

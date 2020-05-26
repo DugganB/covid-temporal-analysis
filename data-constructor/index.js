@@ -37,8 +37,8 @@ function generateDeltaData(date, countyId) {
 
   dateToEntryMap[date][countyId] = {
     ...currentEntry,
-    casesDelta: currentEntry.cases - previousEntry.cases || 0,
-    deathsDelta: currentEntry.deaths - previousEntry.deaths || 0,
+    casesDelta: currentEntry.cases - (previousEntry.cases || 0),
+    deathsDelta: currentEntry.deaths - (previousEntry.deaths || 0),
   };
 }
 

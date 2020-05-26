@@ -1,16 +1,24 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Map, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
-import { Slider } from "@material-ui/core";
+import {
+  Slider,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+} from "@material-ui/core";
 
 import USCounties from "../data/counties.json";
 import ProcessedData from "../data/processed-data-per-county.json";
 
-class App extends Component {
+class App extends PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
       data: {},
+      selectedStat: "casesDelta",
 
       lat: 39.5,
       lng: -98.35,
@@ -49,9 +57,9 @@ class App extends Component {
       ? "#FD8D3C"
       : d > 20
       ? "#FEB24C"
-      : d > 10
+      : d > 0
       ? "#FED976"
-      : "#FFEDA0";
+      : "none";
   }
 
   style(feature) {
@@ -64,7 +72,7 @@ class App extends Component {
     };
 
     return {
-      fillColor: this.getColor(featureData.casesDelta),
+      fillColor: this.getColor(featureData[this.state.selectedStat]),
       weight: 2,
       opacity: 1,
       color: "white",
@@ -76,14 +84,26 @@ class App extends Component {
   render() {
     const position = [this.state.lat, this.state.lng];
     const { dateToDisplay } = this.state;
-    console.log(dateToDisplay);
+
+    let mapBoxAccessToken =
+      "pk.eyJ1IjoiZHVnZ2FuYiIsImEiOiJja2EzZ2kzdXIwYW0zM3ByMTZhbWpoa3JpIn0.8YGDcahjoYyg1hDNDRF0jQ";
 
     return (
       <div className="app">
-        <Map center={position} zoom={this.state.zoom} className="map" id="map1">
+        <Map
+          center={position}
+          zoom={this.state.zoom}
+          className="map"
+          id="map1"
+          zoomControl={false}
+        >
           <TileLayer
-            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            url={
+              `https://api.mapbox.com/styles/v1/dugganb/ckan8109p5i6c1jnssjfmbr0q/tiles/{z}/{x}/{y}?access_token=` +
+              mapBoxAccessToken
+            }
+            tileSize={512}
+            zoomOffset={-1}
           />
           <GeoJSON
             data={USCounties}
@@ -99,6 +119,34 @@ class App extends Component {
             stroke={false}
           />
         </Map>
+        <div className="main-panel">
+          <h1>COVID-19 Infections over time</h1>
+          <p>This map displays various stats for the selected date.</p>
+          <div>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Gender</FormLabel>
+              <RadioGroup
+                aria-label="gender"
+                name="gender1"
+                value={this.state.selectedStat}
+                onChange={(e) =>
+                  this.setState({ selectedStat: e.target.value })
+                }
+              >
+                <FormControlLabel
+                  value="casesDelta"
+                  control={<Radio classes={{ root: "radio-control" }} />}
+                  label="casesDelta"
+                />
+                <FormControlLabel
+                  value="deathsDelta"
+                  control={<Radio />}
+                  label="deathsDelta"
+                />
+              </RadioGroup>
+            </FormControl>
+          </div>
+        </div>
         <div className="slider">
           <Slider
             max={this.state.dateArray.length - 1}
