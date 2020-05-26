@@ -16,9 +16,18 @@ class App extends PureComponent {
   constructor(props) {
     super(props);
 
+    let countyIdMap = {};
+
+    USCounties.features.forEach(
+      (county) => (countyIdMap[county.properties.GEOID] = county.properties)
+    );
+
     this.state = {
       data: {},
       selectedStat: "casesDelta",
+      selectedCountyId: null,
+
+      countyIdMap: countyIdMap,
 
       lat: 39.5,
       lng: -98.35,
@@ -40,9 +49,7 @@ class App extends PureComponent {
     };
   }
 
-  componentDidMount() {
-    console.log(this.state.dateArray);
-  }
+  componentDidMount() {}
 
   getColor(d) {
     return d > 1000
@@ -81,6 +88,22 @@ class App extends PureComponent {
     };
   }
 
+  renderSelectedCountyPanel() {
+    if (this.state.selectedCountyId === null) {
+      return null;
+    }
+
+    let selectedCounty = this.state.countyIdMap[this.state.selectedCountyId];
+    let selectedCountyDateEntry =
+      ProcessedData[this.state.dateToDisplay][selectedCounty.GEOID];
+    console.log(selectedCountyDateEntry);
+    return (
+      <div className="panel selected-county">
+        <h2>{selectedCounty.NAMELSAD}</h2>
+      </div>
+    );
+  }
+
   render() {
     const position = [this.state.lat, this.state.lng];
     const { dateToDisplay } = this.state;
@@ -110,18 +133,56 @@ class App extends PureComponent {
             style={(layer) => this.style(layer)}
             onEachFeature={(feature, layer, test) => {
               layer.on("mouseover", (e) => {
-                e.target.setStyle({ stroke: true, fill: "black" });
+                e.target.setStyle({ stroke: true });
               });
               layer.on("mouseout", (e) => {
-                e.target.setStyle({ stroke: false, fill: "black" });
+                if (
+                  e.target.feature.properties.GEOID !==
+                  this.state.selectedCountyId
+                ) {
+                  e.target.setStyle({ stroke: false });
+                }
+              });
+              layer.on("mousedown", (e) => {
+                //Looking for the layer key that leaflet uses to keep track of layers
+                let previouslySelectedLayerKey = Object.keys(
+                  e.target._map._layers
+                ).find((layerKey) => {
+                  let layer = e.target._map._layers[layerKey];
+                  if (layer.feature === undefined) {
+                    return false;
+                  }
+                  return (
+                    layer.feature.properties.GEOID ===
+                    this.state.selectedCountyId
+                  );
+                });
+                let previouslySelectedLayer =
+                  e.target._map._layers[previouslySelectedLayerKey];
+
+                // If newly clicked layer is different, set the style of the old layer to not be selected
+                if (
+                  previouslySelectedLayer !== undefined &&
+                  this.state.selectedCountyId !==
+                    e.target.feature.properties.GEOID
+                ) {
+                  previouslySelectedLayer.setStyle({ stroke: false });
+                }
+                this.setState({
+                  selectedCountyId: e.target.feature.properties.GEOID,
+                  selectedCountyRef: React.createRef(),
+                });
               });
             }}
             stroke={false}
           />
         </Map>
-        <div className="main-panel">
+        <div className="panel main">
           <h1>COVID-19 Infections over time</h1>
-          <p>This map displays various stats for the selected date.</p>
+          <p>
+            This map displays various stats for the selected date in the slider
+            below.
+          </p>
           <div>
             <FormControl component="fieldset">
               <FormLabel component="legend">Gender</FormLabel>
@@ -143,11 +204,17 @@ class App extends PureComponent {
                   control={<Radio />}
                   label="deathsDelta"
                 />
+                <FormControlLabel
+                  value="casesDoublingTimeDays"
+                  control={<Radio />}
+                  label="casesDoublingTimeDays"
+                />
               </RadioGroup>
             </FormControl>
           </div>
         </div>
-        <div className="slider">
+        {this.renderSelectedCountyPanel()}
+        <div className="panel slider">
           <Slider
             max={this.state.dateArray.length - 1}
             min={0}

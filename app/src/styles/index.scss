@@ -20,31 +20,40 @@ code {
   height: 100vh;
 }
 
-.slider {
+.panel {
   position: absolute;
-  bottom: 2rem;
-  left: 10vw;
-  width: 80vw;
   padding: 1rem 2rem;
   background-color: $panel-background;
   border-radius: 10px;
-  z-index: 999;
-}
-
-.main-panel {
-  background-color: $panel-background;
-  position: absolute;
-  left: 2rem;
-  top: 2rem;
   z-index: 999;
   color: $text-color;
-  padding: 1rem 2rem;
-  border-radius: 10px;
+
+  &.slider {
+    bottom: 2rem;
+    left: 10vw;
+    width: 80vw;
+  }
+
+  &.main {
+    left: 2rem;
+    top: 2rem;
+    width: 22rem;
+  }
+
+  &.selected-county {
+    right: 2rem;
+    top: 2rem;
+  }
 }
 
 h1 {
   color: $header-color;
   font-size: 1.6rem;
+}
+
+h2 {
+  color: $header-color;
+  font-size: 1.4rem;
 }
 
 .MuiFormLabel-root {
