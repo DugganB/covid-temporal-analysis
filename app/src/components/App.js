@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Map, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
+import { Slider } from "@material-ui/core";
 
 import USCounties from "../data/counties.json";
 import ProcessedData from "../data/processed-data-per-county.json";
@@ -15,7 +16,9 @@ class App extends Component {
       lng: -98.35,
       zoom: 5,
 
-      dateToDisplay: "2020-05-21",
+      dateToDisplay: Object.keys(ProcessedData)[0],
+      dateRangeValue: 0,
+      dateArray: [...Object.keys(ProcessedData)],
     };
   }
 
@@ -29,7 +32,9 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    console.log(this.state.dateArray);
+  }
 
   getColor(d) {
     return d > 1000
@@ -49,13 +54,17 @@ class App extends Component {
       : "#FFEDA0";
   }
 
-  style(layer) {
+  style(feature) {
     let dateData = ProcessedData[this.state.dateToDisplay];
-    let featureData = dateData[layer.feature.properties.GEOID] || { cases: 0 };
+    let featureData = dateData[feature.properties.GEOID] || {
+      cases: 0,
+      deaths: 0,
+      casesDelta: 0,
+      deathsDelta: 0,
+    };
 
-    console.log(featureData);
     return {
-      fillColor: this.getColor(featureData.cases),
+      fillColor: this.getColor(featureData.casesDelta),
       weight: 2,
       opacity: 1,
       color: "white",
@@ -67,16 +76,18 @@ class App extends Component {
   render() {
     const position = [this.state.lat, this.state.lng];
     const { dateToDisplay } = this.state;
+    console.log(dateToDisplay);
 
     return (
-      <div className="app" id="mapid">
-        <Map center={position} zoom={this.state.zoom} className="map">
+      <div className="app">
+        <Map center={position} zoom={this.state.zoom} className="map" id="map1">
           <TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <GeoJSON
             data={USCounties}
+            style={(layer) => this.style(layer)}
             onEachFeature={(feature, layer, test) => {
               layer.on("mouseover", (e) => {
                 e.target.setStyle({ stroke: true, fill: "black" });
@@ -84,11 +95,21 @@ class App extends Component {
               layer.on("mouseout", (e) => {
                 e.target.setStyle({ stroke: false, fill: "black" });
               });
-              layer.setStyle(this.style(layer));
             }}
             stroke={false}
           />
         </Map>
+        <div className="slider">
+          <Slider
+            max={this.state.dateArray.length - 1}
+            min={0}
+            defaultValue={0}
+            onChange={(e, value) =>
+              this.setState({ dateToDisplay: this.state.dateArray[value] })
+            }
+            valueLabelDisplay="auto"
+          />
+        </div>
       </div>
     );
   }
