@@ -60,7 +60,9 @@ class App extends PureComponent {
   }
 
   getData() {
-    fetch("/.netlify/functions/getProcessedData")
+    fetch(
+      `/.netlify/functions/getProcessedData?statKey=${this.state.selectedStat}`
+    )
       .then((response) => {
         return response.json();
       })
@@ -96,15 +98,10 @@ class App extends PureComponent {
         fillColor: "none",
       };
     }
-    let featureData = dateData[feature.properties.GEOID] || {
-      cases: 0,
-      deaths: 0,
-      casesDelta: 0,
-      deathsDelta: 0,
-    };
+    let featureData = dateData[feature.properties.GEOID] || 0;
 
     return {
-      fillColor: this.getColor(featureData[this.state.selectedStat]),
+      fillColor: this.getColor(featureData),
       weight: 2,
       opacity: 1,
       dashArray: "3",
@@ -245,7 +242,9 @@ class App extends PureComponent {
                 name="displayStat"
                 value={this.state.selectedStat}
                 onChange={(e) =>
-                  this.setState({ selectedStat: e.target.value })
+                  this.setState({ selectedStat: e.target.value }, () =>
+                    this.getData()
+                  )
                 }
               >
                 <FormControlLabel
