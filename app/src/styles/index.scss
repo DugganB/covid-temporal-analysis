@@ -11,9 +11,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+.app-loader {
+  background-color: $panel-background;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fffffe;
 }
 
 .map {
@@ -77,3 +82,5 @@ h2 {
     color: green;
   }
 }
+
+// Spinner Css
