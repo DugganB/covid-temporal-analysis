@@ -27,6 +27,7 @@ class App extends PureComponent {
       data: {},
       selectedStat: "casesDelta",
       selectedCountyId: null,
+      countyData: {},
 
       countyIdMap: countyIdMap,
 
@@ -67,6 +68,14 @@ class App extends PureComponent {
         return response.json();
       })
       .then((response) => this.setState({ data: response }));
+  }
+
+  getDataByCounty(countyId) {
+    fetch(`/.netlify/functions/getDataByCounty?countyId=${countyId}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => this.setState({ countyData: response }));
   }
 
   getColor(d) {
@@ -115,8 +124,8 @@ class App extends PureComponent {
     }
 
     let selectedCounty = this.state.countyIdMap[this.state.selectedCountyId];
-    let selectedCountyDateEntry = this.state.data[this.state.dateToDisplay][
-      selectedCounty.GEOID
+    let selectedCountyDateEntry = this.state.countyData[
+      this.state.dateToDisplay
     ] || {
       dateToDisplay: "",
       cases: 0,
@@ -222,6 +231,7 @@ class App extends PureComponent {
                   selectedCountyId: e.target.feature.properties.GEOID,
                   selectedCountyRef: React.createRef(),
                 });
+                this.getDataByCounty(e.target.feature.properties.GEOID);
               });
             }}
             stroke={false}
