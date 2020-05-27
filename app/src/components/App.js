@@ -95,13 +95,21 @@ class App extends PureComponent {
     }
 
     let selectedCounty = this.state.countyIdMap[this.state.selectedCountyId];
-    let selectedCountyDateEntry =
-      ProcessedData[this.state.dateToDisplay][selectedCounty.GEOID];
-    console.log(selectedCountyDateEntry);
+    let selectedCountyDateEntry = ProcessedData[this.state.dateToDisplay][
+      selectedCounty.GEOID
+    ] || {
+      dateToDisplay: "",
+      cases: 0,
+      deaths: 0,
+      casesDelta: 0,
+      deathsDelta: 0,
+      casesDoublingTimeDays: "N/A",
+      deathsDoublingTimeDays: "N/A",
+    };
     return (
       <div className="panel selected-county">
         <h2>{selectedCounty.NAMELSAD}</h2>
-        <h3>{moment(selectedCountyDateEntry.date).format("ll")}</h3>
+        <h3>{moment(this.state.dateToDisplay).format("ll")}</h3>
         <div className="selected-county-stat">
           Total Infected: {selectedCountyDateEntry.cases}
         </div>
@@ -217,6 +225,16 @@ class App extends PureComponent {
                   this.setState({ selectedStat: e.target.value })
                 }
               >
+                <FormControlLabel
+                  value="cases"
+                  control={<Radio classes={{ root: "radio-control" }} />}
+                  label="Total Cases"
+                />
+                <FormControlLabel
+                  value="deaths"
+                  control={<Radio classes={{ root: "radio-control" }} />}
+                  label="Total Deaths"
+                />
                 <FormControlLabel
                   value="casesDelta"
                   control={<Radio classes={{ root: "radio-control" }} />}
