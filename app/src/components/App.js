@@ -30,8 +30,8 @@ class App extends PureComponent {
 
       countyIdMap: countyIdMap,
 
-      lat: 39.5,
-      lng: -98.35,
+      lat: 42.5,
+      lng: -106.35,
       zoom: 4,
 
       dateToDisplay: Object.keys(ProcessedData)[0],
