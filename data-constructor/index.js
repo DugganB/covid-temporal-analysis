@@ -89,6 +89,11 @@ function generateDoublingData(date, countyId) {
 }
 
 fs.writeFileSync(
-  "../app/src/data/processed-data-per-county.json",
+  "../app/src/data/dateRangeArray.json",
+  JSON.stringify(Object.keys(dateToEntryMap))
+);
+
+fs.writeFileSync(
+  "../app/functions/getProcessedData/processed-data-per-county.json",
   JSON.stringify(dateToEntryMap)
 );

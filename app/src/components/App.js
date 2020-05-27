@@ -11,7 +11,7 @@ import {
 import moment from "moment";
 
 import USCounties from "../data/counties.json";
-import ProcessedData from "../data/processed-data-per-county.json";
+import DateRangeArray from "../data/dateRangeArray.json";
 
 class App extends PureComponent {
   constructor(props) {
@@ -34,9 +34,9 @@ class App extends PureComponent {
       lng: -122.35,
       zoom: 4,
 
-      dateToDisplay: Object.keys(ProcessedData)[0],
+      dateToDisplay: DateRangeArray[0],
       dateRangeValue: 0,
-      dateArray: [...Object.keys(ProcessedData)],
+      dateArray: [...DateRangeArray],
     };
   }
 
@@ -50,7 +50,22 @@ class App extends PureComponent {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    fetch("/.netlify/functions/helloWorld")
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => console.log(response));
+    this.getData();
+  }
+
+  getData() {
+    fetch("/.netlify/functions/getProcessedData")
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => this.setState({ data: response }));
+  }
 
   getColor(d) {
     return d > 1000
@@ -71,7 +86,16 @@ class App extends PureComponent {
   }
 
   style(feature) {
-    let dateData = ProcessedData[this.state.dateToDisplay];
+    let dateData = this.state.data[this.state.dateToDisplay];
+    if (dateData === undefined) {
+      return {
+        weight: 2,
+        opacity: 1,
+        dashArray: "3",
+        fillOpacity: 0.7,
+        fillColor: "none",
+      };
+    }
     let featureData = dateData[feature.properties.GEOID] || {
       cases: 0,
       deaths: 0,
@@ -83,7 +107,6 @@ class App extends PureComponent {
       fillColor: this.getColor(featureData[this.state.selectedStat]),
       weight: 2,
       opacity: 1,
-      color: "white",
       dashArray: "3",
       fillOpacity: 0.7,
     };
@@ -95,7 +118,7 @@ class App extends PureComponent {
     }
 
     let selectedCounty = this.state.countyIdMap[this.state.selectedCountyId];
-    let selectedCountyDateEntry = ProcessedData[this.state.dateToDisplay][
+    let selectedCountyDateEntry = this.state.data[this.state.dateToDisplay][
       selectedCounty.GEOID
     ] || {
       dateToDisplay: "",
