@@ -25,9 +25,12 @@ class App extends PureComponent {
 
     this.state = {
       data: {},
+      fetchingData: false,
+
       selectedStat: "casesDelta",
       selectedCountyId: null,
       countyData: {},
+      fetchingCountyData: null,
 
       countyIdMap: countyIdMap,
 
@@ -52,30 +55,31 @@ class App extends PureComponent {
   }
 
   componentDidMount() {
-    fetch("/.netlify/functions/helloWorld")
-      .then((response) => {
-        return response.json();
-      })
-      .then((response) => console.log(response));
     this.getData();
   }
 
   getData() {
+    this.setState({ fetchingData: true });
     fetch(
       `/.netlify/functions/getProcessedData?statKey=${this.state.selectedStat}`
     )
       .then((response) => {
         return response.json();
       })
-      .then((response) => this.setState({ data: response }));
+      .then((response) =>
+        this.setState({ data: response, fetchingData: false })
+      );
   }
 
   getDataByCounty(countyId) {
+    this.setState({ fetchingCountyData: countyId });
     fetch(`/.netlify/functions/getDataByCounty?countyId=${countyId}`)
       .then((response) => {
         return response.json();
       })
-      .then((response) => this.setState({ countyData: response }));
+      .then((response) =>
+        this.setState({ countyData: response, fetchingCountyData: null })
+      );
   }
 
   getColor(d) {
@@ -124,6 +128,16 @@ class App extends PureComponent {
     }
 
     let selectedCounty = this.state.countyIdMap[this.state.selectedCountyId];
+
+    if (this.state.fetchingCountyData === this.state.selectedCountyId) {
+      return (
+        <div className="panel selected-county">
+          <h2>{selectedCounty.NAMELSAD}</h2>
+          <p>Loading county data....</p>
+        </div>
+      );
+    }
+
     let selectedCountyDateEntry = this.state.countyData[
       this.state.dateToDisplay
     ] || {
@@ -178,6 +192,7 @@ class App extends PureComponent {
           className="map"
           id="map1"
           zoomControl={false}
+          attributionControl={false}
         >
           <TileLayer
             url={
@@ -261,34 +276,58 @@ class App extends PureComponent {
                   value="cases"
                   control={<Radio classes={{ root: "radio-control" }} />}
                   label="Total Cases"
+                  disabled={this.state.fetchingData}
                 />
                 <FormControlLabel
                   value="deaths"
                   control={<Radio classes={{ root: "radio-control" }} />}
                   label="Total Deaths"
+                  disabled={this.state.fetchingData}
                 />
                 <FormControlLabel
                   value="casesDelta"
                   control={<Radio classes={{ root: "radio-control" }} />}
                   label="Day's New Cases"
+                  disabled={this.state.fetchingData}
                 />
                 <FormControlLabel
                   value="deathsDelta"
                   control={<Radio />}
                   label="Day's New Deaths"
+                  disabled={this.state.fetchingData}
                 />
                 <FormControlLabel
                   value="casesDoublingTimeDays"
                   control={<Radio />}
                   label="Cases Doubling Time (Days)"
+                  disabled={this.state.fetchingData}
                 />
                 <FormControlLabel
                   value="deathsDoublingTimeDays"
                   control={<Radio />}
                   label="Deaths Doubling Time (Days)"
+                  disabled={this.state.fetchingData}
                 />
               </RadioGroup>
             </FormControl>
+            {this.state.fetchingData && (
+              <div className="data-loader">
+                <div class="sk-circle">
+                  <div class="sk-circle1 sk-child"></div>
+                  <div class="sk-circle2 sk-child"></div>
+                  <div class="sk-circle3 sk-child"></div>
+                  <div class="sk-circle4 sk-child"></div>
+                  <div class="sk-circle5 sk-child"></div>
+                  <div class="sk-circle6 sk-child"></div>
+                  <div class="sk-circle7 sk-child"></div>
+                  <div class="sk-circle8 sk-child"></div>
+                  <div class="sk-circle9 sk-child"></div>
+                  <div class="sk-circle10 sk-child"></div>
+                  <div class="sk-circle11 sk-child"></div>
+                  <div class="sk-circle12 sk-child"></div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         {this.renderSelectedCountyPanel()}

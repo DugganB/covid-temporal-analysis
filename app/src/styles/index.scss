@@ -21,6 +21,13 @@ body {
   color: #fffffe;
 }
 
+.data-loader {
+  position: absolute;
+  z-index: 1000;
+  right: 1rem;
+  bottom: 1rem;
+}
+
 .map {
   height: 100vh;
 }
