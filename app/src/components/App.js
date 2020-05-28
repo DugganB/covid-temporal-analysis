@@ -161,6 +161,7 @@ class App extends PureComponent {
           <GeoJSON
             data={USCounties}
             style={(layer) => this.style(layer)}
+            smoothFactor={0.25}
             onEachFeature={(feature, layer, test) => {
               layer.on("mouseover", (e) => {
                 e.target.setStyle({ stroke: true });
