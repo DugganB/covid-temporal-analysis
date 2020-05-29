@@ -253,7 +253,9 @@ class App extends PureComponent {
           <p>Click on a county to view all statistics for the selected date.</p>
           <div>
             <FormControl component="fieldset">
-              <FormLabel component="legend">Display Stat:</FormLabel>
+              <FormLabel component="legend" style={{ marginBottom: "0.4rem" }}>
+                Display Stat:
+              </FormLabel>
               <RadioGroup
                 aria-label="Display Statistic"
                 name="displayStat"
