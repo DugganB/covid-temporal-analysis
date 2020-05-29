@@ -12,6 +12,14 @@ const fs = require("fs");
 const moment = require("moment");
 
 const rawData = require("./data/us-counties.json");
+const counties = require("./data/counties.json");
+const countyData = require("./data/census_county.json");
+let countyPopulationMap = {};
+
+countyData.forEach(
+  (county) => (countyPopulationMap[county.GEO_ID] = county.POPULATION)
+);
+
 let dateToEntryMap = {};
 
 console.log(`US Counties entries: ${rawData.length}`);
@@ -24,6 +32,7 @@ rawData.forEach((entry) => {
   dateToEntryMap[date][entry.fips] = entry;
   generateDeltaData(date, entry.fips);
   generateDoublingData(date, entry.fips);
+  generateIncidenceData(date, entry.fips);
 });
 
 function getPreviousDate(date, unit, amount = 1) {
@@ -88,7 +97,30 @@ function generateDoublingData(date, countyId) {
   };
 }
 
+function generateIncidenceData(date, countyId) {
+  let currentEntry = dateToEntryMap[date][countyId] || {};
+  let countyPopulation = countyPopulationMap[parseInt(countyId)];
+
+  dateToEntryMap[date][countyId] = {
+    ...currentEntry,
+    incidence:
+      Math.round((currentEntry.cases / countyPopulation) * 100000 * 100) / 100,
+  };
+}
+
 fs.writeFileSync(
   "../app/src/data/processed-data-per-county.json",
   JSON.stringify(dateToEntryMap)
+);
+
+let newCountyData = { ...counties };
+
+newCountyData.features.forEach((county) => {
+  let countyId = county.properties.GEOID;
+  county.properties.population = countyPopulationMap[countyId];
+});
+
+fs.writeFileSync(
+  "../app/src/data/counties.json",
+  JSON.stringify(newCountyData)
 );

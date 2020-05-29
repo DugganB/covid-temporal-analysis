@@ -79,8 +79,13 @@ class App extends PureComponent {
       deathsDelta: 0,
     };
 
+    let fillColorStat = featureData[this.state.selectedStat];
+    if (this.state.selectedStat == "population") {
+      fillColorStat = feature.properties.population;
+    }
+
     return {
-      fillColor: this.getColor(featureData[this.state.selectedStat]),
+      fillColor: this.getColor(fillColorStat),
       weight: 2,
       opacity: 1,
       color: "white",
@@ -129,6 +134,9 @@ class App extends PureComponent {
         <div className="selected-county-stat">
           Deaths Doubling Time (Days):{" "}
           {selectedCountyDateEntry.deathsDoublingTimeDays}
+        </div>
+        <div className="selected-county-stat">
+          Total Cases per 100K People: {selectedCountyDateEntry.incidence}
         </div>
       </div>
     );
@@ -255,6 +263,11 @@ class App extends PureComponent {
                   value="deathsDoublingTimeDays"
                   control={<Radio />}
                   label="Deaths Doubling Time (Days)"
+                />
+                <FormControlLabel
+                  value="incidence"
+                  control={<Radio />}
+                  label="Total cases per 100k people"
                 />
               </RadioGroup>
             </FormControl>
