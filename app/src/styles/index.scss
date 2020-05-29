@@ -64,11 +64,13 @@ body {
 h1 {
   color: $header-color;
   font-size: 1.6rem;
+  line-height: 1em;
 }
 
 h2 {
   color: $header-color;
   font-size: 1.4rem;
+  line-height: 1em;
 }
 
 .MuiFormLabel-root {
@@ -80,6 +82,30 @@ h2 {
 
   &.Mui-checked {
     color: green;
+  }
+}
+
+.selected-county {
+  h2 {
+    margin-top: 0.6rem;
+    margin-bottom: 0.2rem;
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+}
+
+.selected-county-stat {
+  margin-bottom: 0.3rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  .label.b {
+  }
+
+  .value.b {
   }
 }
 

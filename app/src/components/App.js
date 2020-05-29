@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Map, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
+import { Map, TileLayer, GeoJSON } from "react-leaflet";
 import {
   Slider,
   FormControl,
@@ -94,6 +94,10 @@ class App extends PureComponent {
     };
   }
 
+  formatNumberWithCommas(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   renderSelectedCountyPanel() {
     if (this.state.selectedCountyId === null) {
       return null;
@@ -116,27 +120,50 @@ class App extends PureComponent {
         <h2>{selectedCounty.NAMELSAD}</h2>
         <h3>{moment(this.state.dateToDisplay).format("ll")}</h3>
         <div className="selected-county-stat">
-          Total Infected: {selectedCountyDateEntry.cases}
+          <span className="label b">Total Infected: </span>
+          <span className="value b">
+            {this.formatNumberWithCommas(selectedCountyDateEntry.cases)}
+          </span>
         </div>
         <div className="selected-county-stat">
-          Total Deaths: {selectedCountyDateEntry.deaths}
+          <span className="label">Total Deaths: </span>
+          <span className="value">
+            {this.formatNumberWithCommas(selectedCountyDateEntry.deaths)}
+          </span>
         </div>
         <div className="selected-county-stat">
-          New Cases: {selectedCountyDateEntry.casesDelta}
+          <span className="label b">New Cases: </span>
+          <span className="value b">
+            {this.formatNumberWithCommas(selectedCountyDateEntry.casesDelta)}
+          </span>
         </div>
         <div className="selected-county-stat">
-          New Deaths: {selectedCountyDateEntry.deathsDelta}
+          <span className="label">New Deaths: </span>
+          <span className="value">
+            {this.formatNumberWithCommas(selectedCountyDateEntry.deathsDelta)}
+          </span>
         </div>
         <div className="selected-county-stat">
-          Infections Doubling Time (days):{" "}
-          {selectedCountyDateEntry.casesDoublingTimeDays}
+          <span className="label b">Infections Doubling Time (days): </span>
+          <span className="value b">
+            {this.formatNumberWithCommas(
+              selectedCountyDateEntry.casesDoublingTimeDays
+            )}
+          </span>
         </div>
         <div className="selected-county-stat">
-          Deaths Doubling Time (Days):{" "}
-          {selectedCountyDateEntry.deathsDoublingTimeDays}
+          <span className="label">Deaths Doubling Time (Days): </span>
+          <span className="value">
+            {this.formatNumberWithCommas(
+              selectedCountyDateEntry.deathsDoublingTimeDays
+            )}
+          </span>
         </div>
         <div className="selected-county-stat">
-          Total Cases per 100K People: {selectedCountyDateEntry.incidence}
+          <span className="label b">Total Cases per 100K People: </span>
+          <span className="value b">
+            {this.formatNumberWithCommas(selectedCountyDateEntry.incidence)}
+          </span>
         </div>
       </div>
     );
