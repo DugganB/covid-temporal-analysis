@@ -157,6 +157,7 @@ class App extends PureComponent {
           className="map"
           id="map1"
           zoomControl={false}
+          attributionControl={false}
         >
           <TileLayer
             url={
