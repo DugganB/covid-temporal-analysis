@@ -404,6 +404,7 @@ class App extends PureComponent {
                   value="incidence"
                   control={<Radio />}
                   label="Total cases per 100k people"
+                  disabled={this.state.fetchingData}
                 />
               </RadioGroup>
             </FormControl>
