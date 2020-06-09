@@ -1,6 +1,7 @@
 $panel-background: #16161a;
 $header-color: #fffffe;
 $text-color: #94a1b2;
+$text-color-white: #fffffe;
 
 body {
   margin: 0;
@@ -71,11 +72,13 @@ body {
 h1 {
   color: $header-color;
   font-size: 1.6rem;
+  line-height: 1em;
 }
 
 h2 {
   color: $header-color;
   font-size: 1.4rem;
+  line-height: 1em;
 }
 
 .MuiFormLabel-root {
@@ -88,6 +91,99 @@ h2 {
   &.Mui-checked {
     color: green;
   }
+}
+
+.MuiIconButton-label {
+  color: $text-color;
+}
+
+.selected-county {
+  h2 {
+    margin-top: 0.6rem;
+    margin-bottom: 0.2rem;
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+}
+
+.selected-county-stat {
+  margin-bottom: 0.3rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  .label.b {
+  }
+
+  .value.b {
+  }
+}
+
+.timeline-button {
+  margin-top: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+button {
+  background: #7f5af0;
+  color: $text-color-white;
+  border: none;
+  border-radius: 6px;
+  padding: 1rem 1.5rem;
+  font-size: 14px;
+
+  &:hover {
+    background: #6648c0;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &.active {
+    background: #6648c0;
+
+    &:hover {
+      background: #7f5af0;
+    }
+  }
+}
+
+.timeline-jump-button {
+  color: #7f5af0;
+  margin-top: 0.5rem;
+
+  &:hover {
+    color: #6648c0;
+    cursor: pointer;
+  }
+}
+
+.timeline-container {
+  overflow: overlay;
+  overflow-x: auto;
+  max-height: 42vh;
+  margin-top: 0.6rem;
+}
+
+.timeline-container {
+  overflow-x: hidden;
+  overflow-y: scroll; // manage scrollbar content overflow settings
+}
+.timeline-container::-webkit-scrollbar {
+  width: 8px; // manage scrollbar width here
+}
+.timeline-container::-webkit-scrollbar * {
+  background: transparent; // manage scrollbar background color here
+}
+.timeline-container::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(
+    #7f5af0,
+    0.6
+  ) !important; // manage scrollbar thumb background color here
 }
 
 // Spinner Css

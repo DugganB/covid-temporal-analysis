@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Map, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
+import { Map, TileLayer, GeoJSON } from "react-leaflet";
 import {
   Slider,
   FormControl,
@@ -9,9 +9,11 @@ import {
   Radio,
 } from "@material-ui/core";
 import moment from "moment";
+import { Timeline, Event } from "react-trivial-timeline";
 
 import USCounties from "../data/counties.json";
 import DateRangeArray from "../data/dateRangeArray.json";
+import StateTimelines from "../data/state-timelines.json";
 
 class App extends PureComponent {
   constructor(props) {
@@ -29,6 +31,7 @@ class App extends PureComponent {
 
       selectedStat: "casesDelta",
       selectedCountyId: null,
+      selectedCountyStateFP: null,
       countyData: {},
       fetchingCountyData: null,
 
@@ -41,6 +44,10 @@ class App extends PureComponent {
       dateToDisplay: DateRangeArray[0],
       dateRangeValue: 0,
       dateArray: [...DateRangeArray],
+
+      sliderValue: 0,
+
+      timelineDisplayed: null,
     };
   }
 
@@ -113,13 +120,36 @@ class App extends PureComponent {
     }
     let featureData = dateData[feature.properties.GEOID] || 0;
 
+    if (
+      this.state.timelineDisplayed === "WA" &&
+      featureData.state !== "Washington"
+    ) {
+      return {
+        fillColor: "none",
+        weight: 2,
+        opacity: 0,
+        color: "white",
+        dashArray: "3",
+        fillOpacity: 0.7,
+      };
+    }
+
+    let fillColorStat = featureData[this.state.selectedStat];
+    if (this.state.selectedStat == "population") {
+      fillColorStat = feature.properties.population;
+    }
+
     return {
-      fillColor: this.getColor(featureData),
+      fillColor: this.getColor(fillColorStat),
       weight: 2,
       opacity: 1,
       dashArray: "3",
       fillOpacity: 0.7,
     };
+  }
+
+  formatNumberWithCommas(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   renderSelectedCountyPanel() {
@@ -148,31 +178,90 @@ class App extends PureComponent {
       deathsDelta: 0,
       casesDoublingTimeDays: "N/A",
       deathsDoublingTimeDays: "N/A",
+      incidence: 0,
     };
     return (
       <div className="panel selected-county">
         <h2>{selectedCounty.NAMELSAD}</h2>
         <h3>{moment(this.state.dateToDisplay).format("ll")}</h3>
         <div className="selected-county-stat">
-          Total Infected: {selectedCountyDateEntry.cases}
+          <span className="label b">Total Infected: </span>
+          <span className="value b">
+            {this.formatNumberWithCommas(selectedCountyDateEntry.cases)}
+          </span>
         </div>
         <div className="selected-county-stat">
-          Total Deaths: {selectedCountyDateEntry.deaths}
+          <span className="label">Total Deaths: </span>
+          <span className="value">
+            {this.formatNumberWithCommas(selectedCountyDateEntry.deaths)}
+          </span>
         </div>
         <div className="selected-county-stat">
-          New Cases: {selectedCountyDateEntry.casesDelta}
+          <span className="label b">New Cases: </span>
+          <span className="value b">
+            {this.formatNumberWithCommas(selectedCountyDateEntry.casesDelta)}
+          </span>
         </div>
         <div className="selected-county-stat">
-          New Deaths: {selectedCountyDateEntry.deathsDelta}
+          <span className="label">New Deaths: </span>
+          <span className="value">
+            {this.formatNumberWithCommas(selectedCountyDateEntry.deathsDelta)}
+          </span>
         </div>
         <div className="selected-county-stat">
-          Infections Doubling Time (days):{" "}
-          {selectedCountyDateEntry.casesDoublingTimeDays}
+          <span className="label b">Infections Doubling Time (days): </span>
+          <span className="value b">
+            {this.formatNumberWithCommas(
+              selectedCountyDateEntry.casesDoublingTimeDays
+            )}
+          </span>
         </div>
         <div className="selected-county-stat">
-          Deaths Doubling Time (Days):{" "}
-          {selectedCountyDateEntry.deathsDoublingTimeDays}
+          <span className="label">Deaths Doubling Time (Days): </span>
+          <span className="value">
+            {this.formatNumberWithCommas(
+              selectedCountyDateEntry.deathsDoublingTimeDays
+            )}
+          </span>
         </div>
+        <div className="selected-county-stat">
+          <span className="label b">Total Cases per 100K People: </span>
+          <span className="value b">
+            {this.formatNumberWithCommas(selectedCountyDateEntry.incidence)}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  renderWAStateTimeline() {
+    return (
+      <div className="timeline-container">
+        <Timeline lineColor="black">
+          {StateTimelines.WA.events.map((event) => {
+            return (
+              <Event
+                interval={event.interval}
+                title={event.title}
+                onClick={(e) => console.log(e.target)}
+                lineColor={"#94a1b2"}
+              >
+                {event.content}
+                <div
+                  className="timeline-jump-button"
+                  onClick={(e) => {
+                    this.setState({
+                      dateToDisplay: event.date,
+                      sliderValue: this.state.dateArray.indexOf(event.date),
+                    });
+                  }}
+                >
+                  Jump to date
+                </div>
+              </Event>
+            );
+          })}
+        </Timeline>
       </div>
     );
   }
@@ -205,6 +294,7 @@ class App extends PureComponent {
           <GeoJSON
             data={USCounties}
             style={(layer) => this.style(layer)}
+            smoothFactor={0.25}
             onEachFeature={(feature, layer, test) => {
               layer.on("mouseover", (e) => {
                 e.target.setStyle({ stroke: true });
@@ -244,7 +334,7 @@ class App extends PureComponent {
                 }
                 this.setState({
                   selectedCountyId: e.target.feature.properties.GEOID,
-                  selectedCountyRef: React.createRef(),
+                  selectedCountyStateFP: e.target.feature.properties.STATEFP,
                 });
                 this.getDataByCounty(e.target.feature.properties.GEOID);
               });
@@ -261,7 +351,9 @@ class App extends PureComponent {
           <p>Click on a county to view all statistics for the selected date.</p>
           <div>
             <FormControl component="fieldset">
-              <FormLabel component="legend">Display Stat:</FormLabel>
+              <FormLabel component="legend" style={{ marginBottom: "0.4rem" }}>
+                Display Stat:
+              </FormLabel>
               <RadioGroup
                 aria-label="Display Statistic"
                 name="displayStat"
@@ -308,6 +400,11 @@ class App extends PureComponent {
                   label="Deaths Doubling Time (Days)"
                   disabled={this.state.fetchingData}
                 />
+                <FormControlLabel
+                  value="incidence"
+                  control={<Radio />}
+                  label="Total cases per 100k people"
+                />
               </RadioGroup>
             </FormControl>
             {this.state.fetchingData && (
@@ -329,6 +426,31 @@ class App extends PureComponent {
               </div>
             )}
           </div>
+          {this.state.selectedCountyStateFP == 53 && (
+            <button
+              className={
+                this.state.timelineDisplayed === "WA"
+                  ? "timeline-button active"
+                  : "timeline-button"
+              }
+              onClick={(e) => {
+                let updatedTimeLineDisplayed =
+                  this.state.timelineDisplayed === "WA" ? null : "WA";
+                this.setState({
+                  zoom: StateTimelines.WA.zoom,
+                  lat: StateTimelines.WA.lat,
+                  lng: StateTimelines.WA.long,
+                  timelineDisplayed: updatedTimeLineDisplayed,
+                });
+              }}
+            >
+              {this.state.timelineDisplayed === "WA"
+                ? "Hide Washington State Timeline"
+                : "View Washington State Timeline"}
+            </button>
+          )}
+          {this.state.timelineDisplayed === "WA" &&
+            this.renderWAStateTimeline()}
         </div>
         {this.renderSelectedCountyPanel()}
         <div className="panel slider">
@@ -339,8 +461,12 @@ class App extends PureComponent {
             max={this.state.dateArray.length - 1}
             min={0}
             defaultValue={0}
+            value={this.state.sliderValue}
             onChange={(e, value) =>
-              this.setState({ dateToDisplay: this.state.dateArray[value] })
+              this.setState({
+                dateToDisplay: this.state.dateArray[value],
+                sliderValue: value,
+              })
             }
             valueLabelDisplay="off"
           />
