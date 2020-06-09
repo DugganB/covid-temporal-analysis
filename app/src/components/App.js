@@ -9,9 +9,11 @@ import {
   Radio,
 } from "@material-ui/core";
 import moment from "moment";
+import { Timeline, Event } from "react-trivial-timeline";
 
 import USCounties from "../data/counties.json";
 import ProcessedData from "../data/processed-data-per-county.json";
+import StateTimelines from "../data/state-timelines.json";
 
 class App extends PureComponent {
   constructor(props) {
@@ -27,6 +29,7 @@ class App extends PureComponent {
       data: {},
       selectedStat: "casesDelta",
       selectedCountyId: null,
+      selectedCountyStateFP: null,
 
       countyIdMap: countyIdMap,
 
@@ -37,6 +40,10 @@ class App extends PureComponent {
       dateToDisplay: Object.keys(ProcessedData)[0],
       dateRangeValue: 0,
       dateArray: [...Object.keys(ProcessedData)],
+
+      sliderValue: 0,
+
+      timelineDisplayed: null,
     };
   }
 
@@ -79,6 +86,20 @@ class App extends PureComponent {
       deathsDelta: 0,
     };
 
+    if (
+      this.state.timelineDisplayed === "WA" &&
+      featureData.state !== "Washington"
+    ) {
+      return {
+        fillColor: "none",
+        weight: 2,
+        opacity: 0,
+        color: "white",
+        dashArray: "3",
+        fillOpacity: 0.7,
+      };
+    }
+
     let fillColorStat = featureData[this.state.selectedStat];
     if (this.state.selectedStat == "population") {
       fillColorStat = feature.properties.population;
@@ -114,6 +135,7 @@ class App extends PureComponent {
       deathsDelta: 0,
       casesDoublingTimeDays: "N/A",
       deathsDoublingTimeDays: "N/A",
+      incidence: 0,
     };
     return (
       <div className="panel selected-county">
@@ -165,6 +187,38 @@ class App extends PureComponent {
             {this.formatNumberWithCommas(selectedCountyDateEntry.incidence)}
           </span>
         </div>
+      </div>
+    );
+  }
+
+  renderWAStateTimeline() {
+    return (
+      <div className="timeline-container">
+        <Timeline lineColor="black">
+          {StateTimelines.WA.events.map((event) => {
+            return (
+              <Event
+                interval={event.interval}
+                title={event.title}
+                onClick={(e) => console.log(e.target)}
+                lineColor={"#94a1b2"}
+              >
+                {event.content}
+                <div
+                  className="timeline-jump-button"
+                  onClick={(e) => {
+                    this.setState({
+                      dateToDisplay: event.date,
+                      sliderValue: this.state.dateArray.indexOf(event.date),
+                    });
+                  }}
+                >
+                  Jump to date
+                </div>
+              </Event>
+            );
+          })}
+        </Timeline>
       </div>
     );
   }
@@ -237,7 +291,7 @@ class App extends PureComponent {
                 }
                 this.setState({
                   selectedCountyId: e.target.feature.properties.GEOID,
-                  selectedCountyRef: React.createRef(),
+                  selectedCountyStateFP: e.target.feature.properties.STATEFP,
                 });
               });
             }}
@@ -302,6 +356,31 @@ class App extends PureComponent {
               </RadioGroup>
             </FormControl>
           </div>
+          {this.state.selectedCountyStateFP == 53 && (
+            <button
+              className={
+                this.state.timelineDisplayed === "WA"
+                  ? "timeline-button active"
+                  : "timeline-button"
+              }
+              onClick={(e) => {
+                let updatedTimeLineDisplayed =
+                  this.state.timelineDisplayed === "WA" ? null : "WA";
+                this.setState({
+                  zoom: StateTimelines.WA.zoom,
+                  lat: StateTimelines.WA.lat,
+                  lng: StateTimelines.WA.long,
+                  timelineDisplayed: updatedTimeLineDisplayed,
+                });
+              }}
+            >
+              {this.state.timelineDisplayed === "WA"
+                ? "Hide Washington State Timeline"
+                : "View Washington State Timeline"}
+            </button>
+          )}
+          {this.state.timelineDisplayed === "WA" &&
+            this.renderWAStateTimeline()}
         </div>
         {this.renderSelectedCountyPanel()}
         <div className="panel slider">
@@ -312,8 +391,12 @@ class App extends PureComponent {
             max={this.state.dateArray.length - 1}
             min={0}
             defaultValue={0}
+            value={this.state.sliderValue}
             onChange={(e, value) =>
-              this.setState({ dateToDisplay: this.state.dateArray[value] })
+              this.setState({
+                dateToDisplay: this.state.dateArray[value],
+                sliderValue: value,
+              })
             }
             valueLabelDisplay="off"
           />

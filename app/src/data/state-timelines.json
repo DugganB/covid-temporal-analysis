@@ -1,0 +1,57 @@
+{
+  "WA": {
+    "zoom": 8,
+    "lat": "47.2511",
+    "long": "-121.7401",
+    "events": [
+      {
+        "title": "First Case in US and WA",
+        "interval": "January 21, 2020",
+        "date": "2020-01-21",
+        "content": "The first confirmed recorded case in the US comes from Snohomish County in Washington State."
+      },
+      {
+        "title": "First Death in US and WA",
+        "interval": "February 29, 2020",
+        "date": "2020-02-29",
+        "content": "The first confirmed recorded death in the US comes from King County in Washington State."
+      },
+      {
+        "title": "King County Reports New Cases",
+        "interval": "March 2, 2020",
+        "date": "2020-03-02",
+        "content": "King County reports 14 new infections with 5 new deaths. Retroactive adjustments were made for infections missed."
+      },
+      {
+        "title": "Seattle State of Emergency",
+        "interval": "March 3, 2020",
+        "date": "2020-03-03",
+        "content": "With growing infections and deaths, Seattle Mayor Jenny Durkan declares a state of emergency"
+      },
+      {
+        "title": "Coronavirus is a Pandemic and start of lockdown",
+        "interval": "March 11, 2020",
+        "date": "2020-03-11",
+        "content": "The WHO declares the coronavirus outbreak a pandemic. Washington Governor, Jay Inslee, bans gatherings of more than 250 people."
+      },
+      {
+        "title": "Continued lockdowns",
+        "interval": "March 15, 2020",
+        "date": "2020-03-15",
+        "content": "With 772 confirmed cases and 42 deaths, Inslee announces all entertainment and recreational facilities will be closing - including bars, restaraunts, and gyms."
+      },
+      {
+        "title": "Phases for reopening annouced",
+        "interval": "May 1, 2020",
+        "date": "2020-05-01",
+        "content": "Governor Inslee announces an extension of WA state stay-home order and annouces a county level phased reopening strategy."
+      },
+      {
+        "title": "King County cleared for Pahe 1.5",
+        "interval": "June 5, 2020",
+        "date": "2020-06-05",
+        "content": "Governor Inslee approves King County to immediatly move to a Phase 1.5."
+      }
+    ]
+  }
+}
