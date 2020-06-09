@@ -30,7 +30,7 @@ module.exports = {
             },
             parallel: true,
             cache: true,
-            sourceMap: true,
+            sourceMap: false,
             extractComments: false,
           }),
         ],
