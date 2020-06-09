@@ -1,6 +1,6 @@
 # COVID-19 Temporal Infection Map
 
-[covid.dugganb.dev](https://covid.dugganb.dev)
+[View map](https://5eda9b3389a6e70007d68ef7--covid-19-stat-map.netlify.app/)
 
 ![Application](./img/application.png)
 
