@@ -42,6 +42,6 @@
     ]
   },
   "resolutions": {
-    "terser": "3.17.0"
+    "terser": "4.7.0"
   }
 }
