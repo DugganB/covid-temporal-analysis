@@ -236,7 +236,13 @@ class App extends PureComponent {
           <h1>COVID-19 Infections Over Time</h1>
           <p>
             This map displays various stats for the selected date in the slider
-            below.
+            below. Learn more about this project{" "}
+            <a
+              target="#"
+              href="https://github.com/DugganB/covid-temporal-analysis"
+            >
+              here
+            </a>
           </p>
           <p>Click on a county to view all statistics for the selected date.</p>
           <div>
@@ -404,8 +410,79 @@ class App extends PureComponent {
             valueLabelDisplay="off"
           />
         </div>
+        <div className="panel legend">
+          <h2>Legend</h2>
+          <div className="legend-item">
+            <span
+              className="legend-color"
+              style={{ background: "#800026" }}
+            ></span>
+            <span className="legend-text">1,000+</span>
+          </div>
+          <div className="legend-item">
+            <span
+              className="legend-color"
+              style={{ background: "#BD0026" }}
+            ></span>
+            <span className="legend-text">500-1,000</span>
+          </div>
+          <div className="legend-item">
+            <span
+              className="legend-color"
+              style={{ background: "#E31A1C" }}
+            ></span>
+            <span className="legend-text">200-500</span>
+          </div>
+
+          <div className="legend-item">
+            <span
+              className="legend-color"
+              style={{ background: "#FC4E2A" }}
+            ></span>
+            <span className="legend-text">100-200</span>
+          </div>
+          <div className="legend-item">
+            <span
+              className="legend-color"
+              style={{ background: "#FD8D3C" }}
+            ></span>
+            <span className="legend-text">50-100</span>
+          </div>
+          <div className="legend-item">
+            <span
+              className="legend-color"
+              style={{ background: "#FEB24C" }}
+            ></span>
+            <span className="legend-text">20-50</span>
+          </div>
+          <div className="legend-item">
+            <span
+              className="legend-color"
+              style={{ background: "#FED976" }}
+            ></span>
+            <span className="legend-text">0-20</span>
+          </div>
+        </div>
       </div>
     );
+  }
+
+  getColor(d) {
+    return d > 1000
+      ? "#800026"
+      : d > 500
+      ? "#BD0026"
+      : d > 200
+      ? "#E31A1C"
+      : d > 100
+      ? "#FC4E2A"
+      : d > 50
+      ? "#FD8D3C"
+      : d > 20
+      ? "#FEB24C"
+      : d > 0
+      ? "#FED976"
+      : "none";
   }
 }
 
