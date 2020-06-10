@@ -232,72 +232,6 @@ class App extends PureComponent {
 
     return (
       <div className="app">
-        <Map
-          center={position}
-          zoom={this.state.zoom}
-          className="map"
-          id="map1"
-          zoomControl={false}
-          attributionControl={false}
-        >
-          <TileLayer
-            url={
-              `https://api.mapbox.com/styles/v1/dugganb/ckan8109p5i6c1jnssjfmbr0q/tiles/{z}/{x}/{y}?access_token=` +
-              mapBoxAccessToken
-            }
-            tileSize={512}
-            zoomOffset={-1}
-          />
-          <GeoJSON
-            data={USCounties}
-            style={(layer) => this.style(layer)}
-            smoothFactor={0.25}
-            onEachFeature={(feature, layer, test) => {
-              layer.on("mouseover", (e) => {
-                e.target.setStyle({ stroke: true });
-              });
-              layer.on("mouseout", (e) => {
-                if (
-                  e.target.feature.properties.GEOID !==
-                  this.state.selectedCountyId
-                ) {
-                  e.target.setStyle({ stroke: false });
-                }
-              });
-              layer.on("mousedown", (e) => {
-                //Looking for the layer key that leaflet uses to keep track of layers
-                let previouslySelectedLayerKey = Object.keys(
-                  e.target._map._layers
-                ).find((layerKey) => {
-                  let layer = e.target._map._layers[layerKey];
-                  if (layer.feature === undefined) {
-                    return false;
-                  }
-                  return (
-                    layer.feature.properties.GEOID ===
-                    this.state.selectedCountyId
-                  );
-                });
-                let previouslySelectedLayer =
-                  e.target._map._layers[previouslySelectedLayerKey];
-
-                // If newly clicked layer is different, set the style of the old layer to not be selected
-                if (
-                  previouslySelectedLayer !== undefined &&
-                  this.state.selectedCountyId !==
-                    e.target.feature.properties.GEOID
-                ) {
-                  previouslySelectedLayer.setStyle({ stroke: false });
-                }
-                this.setState({
-                  selectedCountyId: e.target.feature.properties.GEOID,
-                  selectedCountyStateFP: e.target.feature.properties.STATEFP,
-                });
-              });
-            }}
-            stroke={false}
-          />
-        </Map>
         <div className="panel main">
           <h1>COVID-19 Infections Over Time</h1>
           <p>
@@ -382,7 +316,76 @@ class App extends PureComponent {
           {this.state.timelineDisplayed === "WA" &&
             this.renderWAStateTimeline()}
         </div>
-        {this.renderSelectedCountyPanel()}
+        <div className="map-container">
+          <Map
+            center={position}
+            zoom={this.state.zoom}
+            className="map"
+            id="map1"
+            zoomControl={false}
+            attributionControl={false}
+          >
+            <TileLayer
+              url={
+                `https://api.mapbox.com/styles/v1/dugganb/ckan8109p5i6c1jnssjfmbr0q/tiles/{z}/{x}/{y}?access_token=` +
+                mapBoxAccessToken
+              }
+              tileSize={512}
+              zoomOffset={-1}
+            />
+            <GeoJSON
+              data={USCounties}
+              style={(layer) => this.style(layer)}
+              smoothFactor={0.25}
+              onEachFeature={(feature, layer, test) => {
+                layer.on("mouseover", (e) => {
+                  e.target.setStyle({ stroke: true });
+                });
+                layer.on("mouseout", (e) => {
+                  if (
+                    e.target.feature.properties.GEOID !==
+                    this.state.selectedCountyId
+                  ) {
+                    e.target.setStyle({ stroke: false });
+                  }
+                });
+                layer.on("mousedown", (e) => {
+                  //Looking for the layer key that leaflet uses to keep track of layers
+                  let previouslySelectedLayerKey = Object.keys(
+                    e.target._map._layers
+                  ).find((layerKey) => {
+                    let layer = e.target._map._layers[layerKey];
+                    if (layer.feature === undefined) {
+                      return false;
+                    }
+                    return (
+                      layer.feature.properties.GEOID ===
+                      this.state.selectedCountyId
+                    );
+                  });
+                  let previouslySelectedLayer =
+                    e.target._map._layers[previouslySelectedLayerKey];
+
+                  // If newly clicked layer is different, set the style of the old layer to not be selected
+                  if (
+                    previouslySelectedLayer !== undefined &&
+                    this.state.selectedCountyId !==
+                      e.target.feature.properties.GEOID
+                  ) {
+                    previouslySelectedLayer.setStyle({ stroke: false });
+                  }
+                  this.setState({
+                    selectedCountyId: e.target.feature.properties.GEOID,
+                    selectedCountyStateFP: e.target.feature.properties.STATEFP,
+                  });
+                });
+              }}
+              stroke={false}
+            />
+          </Map>
+          {this.renderSelectedCountyPanel()}
+        </div>
+
         <div className="panel slider">
           <div className="slider-date">
             {moment(this.state.dateToDisplay).format("ll")}
