@@ -1,27 +1,24 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
-const fetch = require("node-fetch");
+const axios = require("axios");
+const util = require("util");
 const csv = require("csvtojson");
-var sleep = require("sleep");
+const fs_writeFile = util.promisify(fs.writeFile);
 
 let CSVDataPath = "./data/NYT_county.csv";
 
-async function getCSVData() {
-  const response = await fetch(
+axios
+  .get(
     "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
-  );
-  const dest = fs.createWriteStream(CSVDataPath);
-  await response.body.pipe(dest);
-
-  console.log("Downloaded CSV data from GitHub");
-}
-
-console.log("Converting CSV to JSON");
-csv()
-  .fromFile(CSVDataPath)
+  )
+  .then((response) => {
+    return fs_writeFile(CSVDataPath, response.data);
+  })
+  .then((response) => {
+    return csv().fromFile(CSVDataPath);
+  })
   .then((json) => {
-    console.log("Writing JSON to data file");
-    fs.writeFileSync("./data/us-counties.json", JSON.stringify(json));
-    console.log("Refresh complete");
+    console.log(json);
+    return fs_writeFile("./data/us-counties.json", JSON.stringify(json));
   });
