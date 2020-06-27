@@ -19,6 +19,5 @@ axios
     return csv().fromFile(CSVDataPath);
   })
   .then((json) => {
-    console.log(json);
     return fs_writeFile("./data/us-counties.json", JSON.stringify(json));
   });
