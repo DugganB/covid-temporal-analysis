@@ -13,14 +13,14 @@ jobs:
           steps:
             - run: ls
             - run: 
-              name: Refresh data from NYT
-              command: cd ./data-constructor/ && ls && npm install && npm run refresh && npm start
+                name: Refresh data from NYT
+                command: cd ./data-constructor/ && ls && npm install && npm run refresh && npm start
             - run: 
-              name: Build App
-              command: cd ./app/ && ls && npm install && npm build
+                name: Build App
+                command: cd ./app/ && ls && npm install && npm build
             - run:
-              name: Deploy
-              command: curl -X POST -d {} ${hook}
+                name: Deploy
+                command: curl -X POST -d {} ${hook}
 workflows:
     build-and-test:
       jobs:
