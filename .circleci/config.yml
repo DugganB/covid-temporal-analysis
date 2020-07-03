@@ -11,11 +11,14 @@ jobs:
           node-version: latest
       - node/with-cache:
           steps:
+            - run: ls
             - run: cd ./data-constructor
+            - run: ls
             - run: npm install
             - run: npm run refresh
             - run: npm start
             - run: cd ../app
+            - run: ls
             - run: npm install
             - run: npm build
 workflows:
