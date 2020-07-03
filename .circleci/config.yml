@@ -7,16 +7,17 @@ jobs:
       name: node/default
     steps:
       - checkout
-      - run: cd ./data-constructor
       - node/install:
           node-version: latest
       - node/with-cache:
           steps:
+            - run: cd ./data-constructor
             - run: npm install
             - run: npm run refresh
             - run: npm start
-      - run: cd ../app
-      - run: npm build
+            - run: cd ../app
+            - run: npm install
+            - run: npm build
 workflows:
     build-and-test:
       jobs:
