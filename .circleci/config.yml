@@ -19,8 +19,8 @@ jobs:
               name: Build App
               command: cd ./app/ && ls && npm install && npm build
             - run:
-                name: Deploy
-                command: curl -X POST -d {} ${hook}
+              name: Deploy
+              command: curl -X POST -d {} ${hook}
 workflows:
     build-and-test:
       jobs:
