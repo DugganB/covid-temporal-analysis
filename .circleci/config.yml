@@ -12,15 +12,15 @@ jobs:
       - node/with-cache:
           steps:
             - run: ls
-            - run: cd ./data-constructor/ && ls
-            - run: ls
-            - run: npm install
-            - run: npm run refresh
-            - run: npm start
-            - run: cd ../app/
-            - run: ls
-            - run: npm install
-            - run: npm build
+            - run: 
+              name: Refresh data from NYT
+              command: cd ./data-constructor/ && ls && npm install && npm run refresh && npm start
+            - run: 
+              name: Build App
+              command: cd ./app/ && ls && npm install && npm build
+            - run:
+                name: Deploy
+                command: curl -X POST -d {} ${hook}
 workflows:
     build-and-test:
       jobs:
