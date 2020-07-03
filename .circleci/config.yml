@@ -1,0 +1,23 @@
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
+jobs:
+  build:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - run: cd ./data-constructor
+      - node/install:
+          node-version: latest
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm run refresh
+            - run: npm start
+      - run: cd ../app
+      - run: npm build
+workflows:
+    build-and-test:
+      jobs:
+        - build

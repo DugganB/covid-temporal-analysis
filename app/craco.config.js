@@ -8,7 +8,7 @@ module.exports = {
         ...webpackConfig.optimization,
         minimizer: [
           new TerserPlugin({
-            parallel: 2,
+            parallel: 6,
           }),
         ],
       },
