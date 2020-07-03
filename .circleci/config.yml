@@ -7,9 +7,9 @@ jobs:
       name: node/default
     steps:
       - checkout
-      - node/install-packages
+      - node/install-packages:
         app-dir: ~/project/app
-      - node/install-packages
+      - node/install-packages:
         app-dir: ~/project/data-constructor
       - run: 
           name: Refresh data from NYT
