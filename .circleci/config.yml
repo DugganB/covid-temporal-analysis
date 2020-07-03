@@ -8,9 +8,9 @@ jobs:
     steps:
       - checkout
       - node/install-packages
-          app-dir: ~/project/app
+        app-dir: ~/project/app
       - node/install-packages
-          app-dir: ~/project/data-constructor
+        app-dir: ~/project/data-constructor
       - run: 
           name: Refresh data from NYT
           command: cd ./data-constructor/ && ls && npm run refresh && npm start
