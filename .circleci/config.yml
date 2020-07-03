@@ -7,20 +7,19 @@ jobs:
       name: node/default
     steps:
       - checkout
-      - node/install:
-          node-version: latest
-      - node/with-cache:
-          steps:
-            - run: ls
-            - run: 
-                name: Refresh data from NYT
-                command: cd ./data-constructor/ && ls && npm install && npm run refresh && npm start
-            - run: 
-                name: Build App
-                command: cd ./app/ && ls && npm install && npm run build
-            - run:
-                name: Deploy
-                command: curl -X POST -d {} ${hook}
+      - node/install-packages
+          app-dir: ~/project/app
+      - node/install-packages
+          app-dir: ~/project/data-constructor
+      - run: 
+          name: Refresh data from NYT
+          command: cd ./data-constructor/ && ls && npm run refresh && npm start
+      - run: 
+          name: Build App
+          command: cd ./app/ && ls && npm run build
+      - run:
+          name: Deploy
+          command: curl -X POST -d {} ${hook}
 workflows:
     build-and-test:
       jobs:
