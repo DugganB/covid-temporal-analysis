@@ -8,10 +8,10 @@ jobs:
     steps:
       - checkout
       - node/install-packages:
-          install-yarn: true
+          override-ci-command: yarn install
           app-dir: ~/project/app
       - node/install-packages:
-          install-yarn: true
+          override-ci-command: yarn install
           app-dir: ~/project/data-constructor
       - run: 
           name: Refresh data from NYT
