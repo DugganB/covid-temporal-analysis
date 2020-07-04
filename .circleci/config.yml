@@ -19,7 +19,7 @@ jobs:
           command: cd ./data-constructor/ && ls && npm run refresh && npm start
       - run: 
           name: Build App
-          command: cd ./app/ && ls && npm run build
+          command: cd ./app/ && ls && CI=false npm run build
       - run:
           name: Deploy
           command: curl -X POST -d {} ${hook}
