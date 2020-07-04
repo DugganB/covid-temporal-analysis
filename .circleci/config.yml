@@ -22,7 +22,7 @@ jobs:
           command: cd ./app/ && ls && CI=false npm run build
       - run:
           name: Deploy
-          command: curl -X POST -d {} ${hook}
+          command: curl -X POST -d {} $hook
 workflows:
     build-and-test:
       jobs:
