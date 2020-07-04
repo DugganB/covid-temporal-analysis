@@ -21,8 +21,11 @@ jobs:
           name: Build App
           command: cd ./app/ && ls && CI=false npm run build
       - run:
-          name: Deploy
-          command: sudo npm install netlify-cli -g && netlify deploy --prod --dir ./app/build --message "site deployed from circle ci"  --site covid-19-stat-map
+          name: Install Netlify CLI
+          command: sudo npm install netlify-cli -g
+      - run:
+          name: Deploy to Netlify
+          command: ls && netlify deploy --prod --message "site deployed from circle ci"  --site covid-19-stat-map
 workflows:
     build-and-test:
       jobs:
