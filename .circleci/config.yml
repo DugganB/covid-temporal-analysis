@@ -28,5 +28,12 @@ jobs:
           command: ls && netlify deploy --prod --message "site deployed from circle ci"
 workflows:
     build-and-test:
+      triggers:
+       - schedule:
+           cron: "0 0 * * *"
+           filters:
+             branches:
+               only:
+                 - master
       jobs:
         - build
