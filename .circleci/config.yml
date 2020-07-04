@@ -5,6 +5,7 @@ jobs:
   build:
     executor:
       name: node/default
+      resource_class: xlarge
     steps:
       - checkout
       - node/install-packages:
