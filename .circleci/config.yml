@@ -25,7 +25,7 @@ jobs:
           command: sudo npm install netlify-cli -g
       - run:
           name: Deploy to Netlify
-          command: ls && netlify deploy --prod --message "site deployed from circle ci"  --site covid-19-stat-map
+          command: ls && netlify deploy --prod --message "site deployed from circle ci"
 workflows:
     build-and-test:
       jobs:
