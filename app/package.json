@@ -18,7 +18,7 @@
     "react-scripts": "^3.4.1",
     "react-trivial-timeline": "^1.2.2",
     "styled-components": "^5.1.1",
-    "terser": "3.14.1"
+    "terser": "4.8.1"
   },
   "scripts": {
     "start": "react-scripts start",
